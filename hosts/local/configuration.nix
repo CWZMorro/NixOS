@@ -13,6 +13,7 @@
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.resumeDevice = "/dev/disk/by-label/swap";
 
   networking.hostName = "CielNixAzure"; # Define your hostname.
 
@@ -20,10 +21,16 @@
   networking.networkmanager.enable = true;
 
   nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nixpkgs.config.allowUnfree = true;
 
-  # Nvidia Drivers
+  hardware.graphics.enable = true;
   services.xserver.videoDrivers = ["nvidia"];
-  hardware.nvidia.modesetting.enable = true;
+  hardware.nvidia = {
+    modesetting.enable = true;
+    powerManagement.enable = true;
+    open = true;
+    nvidiaSettings = true;
+  };
 
   # Set your time zone.
   # time.timeZone = "Europe/Amsterdam";
@@ -40,22 +47,14 @@
   #   useXkbConfig = true; # use xkb.options in tty.
   # };
 
-  # Enable the X11 windowing system.
-  # services.xserver.enable = true;
-
-
-  
-
-  # Configure keymap in X11
-  # services.xserver.xkb.layout = "us";
-  # services.xserver.xkb.options = "eurosign:e,caps:escape";
+  # Enable login manager
+  services.xserver.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;
 
   # Enable sound.
-  # services.pulseaudio.enable = true;
-  # OR
   services.pipewire = {
     enable = true;
     pulse.enable = true;
@@ -69,18 +68,19 @@
     isNormalUser = true;
     extraGroups = [ "wheel" "networkmanager" "video" ]; # Enable ‘sudo’ for the user.
     initialPassword = "idk";
-  #   packages = with pkgs; [
-  #     tree
-  #   ];
+  #  packages = with pkgs; [
+  #    tree
+  #  ];
   };
 
-  # programs.firefox.enable = true;
+  programs.firefox.enable = true;
+  programs.niri.enable = true;
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
   environment.systemPackages = with pkgs; [
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #   wget
+    wget
     git
   ];
 
