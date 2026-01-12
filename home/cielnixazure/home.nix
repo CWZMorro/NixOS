@@ -33,7 +33,7 @@
   programs.git = {
     enable = true;
     userName = "CielNixAzure";
-    userEmail = "chungwinzun7765@gmail.com";
+    userEmail = "cwzmorro@gmail.com";
     extraConfig = {
       init.defaultBranch = "main";
     };
