@@ -1,2 +1,2 @@
 # nix-os
-Here is my configs in nix
+Here lie my configs in nixos
