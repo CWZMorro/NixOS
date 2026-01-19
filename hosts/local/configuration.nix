@@ -14,6 +14,13 @@
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.resumeDevice = "/dev/disk/by-label/swap";
+  # Limit boot entries and garbage collection
+  boot.loader.systemd-boot.configurationLimit = 5;
+  nix.gc = {
+    automatic = true;
+    dates = "weekly";
+    options = "--delete-older-than 7d";
+  };
 
   networking.hostName = "CielNixAzure"; # Define your hostname.
 
@@ -32,8 +39,12 @@
     nvidiaSettings = true;
   };
 
+
+  #Storage optimization
+  nix.settings.auto-optimise-store = true;
+
   # Set your time zone.
-  # time.timeZone = "Europe/Amsterdam";
+  time.timeZone = "America/Edmonton";
 
   # Configure network proxy if necessary
   # networking.proxy.default = "http://user:password@proxy:port/";
@@ -60,6 +71,11 @@
     pulse.enable = true;
   };
 
+  # Enable asus specific services
+  services.asusd = {
+    enable = true;
+    enableUserService = true;
+  };
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
 
@@ -82,6 +98,7 @@
     vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
     wget
     git
+    asusctl # CLI tool to control battery
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
