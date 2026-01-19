@@ -5,11 +5,34 @@
   home.homeDirectory = "/home/cielnixazure";
   
   home.packages = with pkgs; [
+    # GUI Apps
+    discord
+    spotify
+
+    # Terminal emulator 
     kitty
+
+    # Utilities
     fuzzel
     waybar
     dunst
     pkgs.networkmanagerapplet
+    grim # screenshot tool
+    slurp # select area for ss
+    wl-clipboard # clipboard manager
+    brightnessctl # brightness control
+    
+
+    # Lazyvim
+    neovim
+    ripgrep
+    fd
+    unzip
+    gcc
+    lazygit
+
+    # Fonts
+    nerd-fonts.jetbrains-mono
   ];
   
   # Niri config
@@ -42,7 +65,6 @@
   programs.home-manager.enable = true;
   programs.waybar.enable = true;
   services.dunst.enable = true;
-  services.ssh-agent.enable = true;
 
   home.stateVersion = "24.11";
 }
