@@ -1,6 +1,8 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, ... }:
 
 {
+  imports = [ inputs.nixCats.homeModule ];
+
   home.username = "cielnixazure";
   home.homeDirectory = "/home/cielnixazure";
   
@@ -26,12 +28,25 @@
     
 
     # Lazyvim
-    neovim
     ripgrep
     fd
     unzip
     gcc
     lazygit
+
+    # Runtimes
+    nodejs_22
+    jdk17
+    python3
+
+    # LSP & formatters
+    nixd
+    nixfmt-rfc-style
+    lua-language-server
+    stylua
+    vtsls
+    basedpyright
+    ruff
 
     # Fonts
     nerd-fonts.jetbrains-mono
@@ -57,6 +72,9 @@
       XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "2%+"; }
       XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "2%-"; }
 
+      // Brightness controls
+      Mod+XF86AudioRaiseVolume allow-when-locked=true { spawn "brightnessctl" "set" "5%+"; }
+      Mod+XF86AudioLowerVolume allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
       // Screenshot
       Print { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy";}
     }
@@ -78,8 +96,8 @@
     shellAliases = {
       lg = "lazygit";
       rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config#CielNixAzure";
-      conf = "~/nixos-config/hosts/local/configuration.nix";
-      home = "~/nixos-cofig/home/cielnixazure/home.nix";
+      conf = "nvim ~/nixos-config/hosts/local/configuration.nix";
+      home = "nvim ~/nixos-config/home/cielnixazure/home.nix";
     };
   };
   programs.bash = {
@@ -89,6 +107,82 @@
         exec fish
       fi
     '';
+  };
+
+  # Nixcats config
+  nixCats = {
+    enable = true;
+    packageNames = [ "nvim" ];
+    luaPath = ../../nvim;
+    categoryDefinitions.replace = ({ pkgs, ...}: {
+      startupPlugins = {
+        general = with pkgs.vimPlugins; [
+          # Core framework & manager
+          LazyVim
+          lazy-nvim # plugin manager
+
+          # UI
+          snacks-nvim
+          noice-nvim
+          lualine-nvim
+          bufferline-nvim
+          gitsigns-nvim
+          mini-icons
+          which-key-nvim
+          todo-comments-nvim
+          trouble-nvim
+          nui-nvim
+
+          # Completion & snippets
+          blink-cmp
+          blink-compat
+          friendly-snippets
+
+          # Editing & navigation
+          flash-nvim
+          mini-ai
+          mini-pairs
+          grug-far-nvim
+          yanky-nvim
+          persistence-nvim
+          plenary-nvim
+
+          # LSP, formatting & linting
+          nvim-lspconfig
+          conform-nvim
+          nvim-lint
+          lazydev-nvim
+          SchemaStore-nvim
+
+          # Treesitter
+          nvim-treesitter.withAllGrammars
+          nvim-treesitter-textobjects
+          nvim-ts-autotag
+          ts-comments-nvim
+
+          # Colorscheme
+          tokyonight-nvim
+          catppuccin-nvim
+          
+          # Mason
+          mason-nvim
+          mason-lspconfig-nvim
+          
+          # Misc
+          nvim-jdtls # extended support for java
+          venv-selector-nvim # venvs selector
+          markdown-preview-nvim 
+          render-markdown-nvim
+        ];
+      };
+    });
+    packageDefinitions.replace  = {
+      nvim = ({ pkgs, ... }: {
+        categories = {
+          general = true;
+        };
+      });
+    };
   };
 
   programs.home-manager.enable = true;

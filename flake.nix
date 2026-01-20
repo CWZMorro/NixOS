@@ -5,8 +5,9 @@
   home-manager.url = "github:nix-community/home-manager";
   home-manager.inputs.nixpkgs.follows = "nixpkgs";
   niri.url = "github:sodiboo/niri-flake";
+  nixCats.url = "github:BirdeeHub/nixCats-nvim";
  };
- outputs = { self, nixpkgs, home-manager, niri, ... }@inputs: {
+ outputs = { self, nixpkgs, home-manager, niri, nixCats, ... }@inputs: {
   nixosConfigurations = {
    CielNixAzure = nixpkgs.lib.nixosSystem {
     system = "x86_64-linux";
@@ -17,6 +18,7 @@
      {
       home-manager.useGlobalPkgs = true;
       home-manager.useUserPackages = true;
+      home-manager.extraSpecialArgs = { inherit inputs; };
       home-manager.users.cielnixazure = import ./home/cielnixazure/home.nix;
      } 
     ];
