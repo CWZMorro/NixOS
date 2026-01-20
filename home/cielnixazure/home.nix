@@ -56,6 +56,9 @@
       // Audio controls
       XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "2%+"; }
       XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "2%-"; }
+
+      // Screenshot
+      Print { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy";}
     }
   '';
 
@@ -75,6 +78,8 @@
     shellAliases = {
       lg = "lazygit";
       rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config#CielNixAzure";
+      conf = "~/nixos-config/hosts/local/configuration.nix";
+      home = "~/nixos-cofig/home/cielnixazure/home.nix";
     };
   };
   programs.bash = {
