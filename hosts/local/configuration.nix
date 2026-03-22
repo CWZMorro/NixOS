@@ -2,13 +2,18 @@
 # your system. Help is available in the configuration.nix(5) man page, on
 # https://search.nixos.org/options and in the NixOS manual (`nixos-help`).
 
-{ config, lib, pkgs, ... }:
+{
+  config,
+  lib,
+  pkgs,
+  ...
+}:
 
 {
-  imports =
-    [ # Include the results of the hardware scan.
-      ./hardware-configuration.nix
-    ];
+  imports = [
+    # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+  ];
 
   # Use the systemd-boot EFI boot loader.
   boot.loader.systemd-boot.enable = true;
@@ -27,18 +32,20 @@
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
 
-  nix.settings.experimental-features = [ "nix-command" "flakes" ];
+  nix.settings.experimental-features = [
+    "nix-command"
+    "flakes"
+  ];
   nixpkgs.config.allowUnfree = true;
 
   hardware.graphics.enable = true;
-  services.xserver.videoDrivers = ["nvidia"];
+  services.xserver.videoDrivers = [ "nvidia" ];
   hardware.nvidia = {
     modesetting.enable = true;
     powerManagement.enable = true;
     open = true;
     nvidiaSettings = true;
   };
-
 
   #Storage optimization
   nix.settings.auto-optimise-store = true;
@@ -60,7 +67,7 @@
 
   # Enable login manager
   services.xserver.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
+  services.displayManager.gdm.enable = true;
 
   # Enable CUPS to print documents.
   # services.printing.enable = true;
@@ -69,7 +76,16 @@
   services.pipewire = {
     enable = true;
     pulse.enable = true;
+    wireplumber.enable = true;
   };
+
+  # Hardware Daemons
+  services.upower.enable = true;
+  programs.light.enable = true;
+  services.power-profiles-daemon.enable = true;
+
+  # Enable bluetooth
+  hardware.bluetooth.enable = true;
 
   # Enable asus specific services
   services.asusd = {
@@ -82,11 +98,16 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.cielnixazure = {
     isNormalUser = true;
-    extraGroups = [ "wheel" "networkmanager" "video" ]; # Enable ‘sudo’ for the user.
+    extraGroups = [
+      "wheel"
+      "networkmanager"
+      "video"
+      "input"
+    ]; # Enable ‘sudo’ for the user.
     initialPassword = "idk";
-  #  packages = with pkgs; [
-  #    tree
-  #  ];
+    #  packages = with pkgs; [
+    #    tree
+    #  ];
   };
 
   programs.firefox.enable = true;
@@ -145,4 +166,3 @@
   system.stateVersion = "25.11"; # Did you read the comment?
 
 }
-

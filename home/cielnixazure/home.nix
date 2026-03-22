@@ -1,23 +1,27 @@
-{ config, pkgs, inputs, ... }:
+{
+  config,
+  pkgs,
+  inputs,
+  ...
+}:
 
 {
-  imports = [ inputs.nixCats.homeModule ];
-
   home.username = "cielnixazure";
   home.homeDirectory = "/home/cielnixazure";
-  
+
   home.packages = with pkgs; [
     # GUI Apps
     xwayland-satellite # needed for x11 apps
     discord
     spotify
+    inputs.noctalia.packages.${pkgs.stdenv.hostPlatform.system}.default
 
-    # Terminal emulator 
+    # Terminal emulator
     kitty
 
     # Utilities
     fuzzel
-    waybar
+
     dunst
     pkgs.networkmanagerapplet
     grim # screenshot tool
@@ -25,9 +29,8 @@
     wl-clipboard # clipboard manager
     brightnessctl # brightness control
     pavucontrol # gui volume control
-    
 
-    # Lazyvim
+    # CLI tools
     ripgrep
     fd
     unzip
@@ -39,25 +42,20 @@
     jdk17
     python3
 
-    # LSP & formatters
-    nixd
-    nixfmt-rfc-style
-    lua-language-server
-    stylua
-    vtsls
-    basedpyright
-    ruff
-
     # Fonts
     nerd-fonts.jetbrains-mono
+
   ];
-  
+
   # Niri config
   xdg.configFile."niri/config.kdl".text = ''
     spawn-at-startup "xwayland-satellite"
-    spawn-at-startup "waybar"
     spawn-at-startup "dunst"
     spawn-at-startup "nm-applet"
+
+    window-rule{
+      open-maximized true
+    }
     input {
       keyboard {
         xkb { layout "us"; }
@@ -77,15 +75,38 @@
       Mod+XF86AudioLowerVolume allow-when-locked=true { spawn "brightnessctl" "set" "5%-"; }
       // Screenshot
       Print { spawn "sh" "-c" "grim -g \"$(slurp)\" - | wl-copy";}
+
+
+      // Fullscreen and maximize
+      Mod+F { maximize-column; }
+      Mod+Shift+F { fullscreen-window; }
+
+      // Focus windows
+      Mod+H { focus-column-left; }
+      Mod+J { focus-window-down; }
+      Mod+K { focus-window-up; }
+      Mod+L { focus-column-right; }
+
+      // Mmove windows
+      Mod+Ctrl+H { move-column-left; }
+      Mod+Ctrl+J { move-window-down; }
+      Mod+Ctrl+K { move-window-up; }
+      Mod+Ctrl+L { move-column-right; }
+
+      // Mouse controls
+      Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
+      Mod+WheelScrollUp cooldown-ms=150 { focus-workspace-up; }
+      Mod+WheelScrollRight { focus-column-right; }
+      Mod+WheelScrollLeft { focus-column-left; }
     }
   '';
 
   # Git config
   programs.git = {
     enable = true;
-    userName = "CielNixAzure";
-    userEmail = "cwzmorro@gmail.com";
-    extraConfig = {
+    settings = {
+      user.name = "CielNixAzure";
+      user.email = "cwzmorro@gmail.com";
       init.defaultBranch = "main";
     };
   };
@@ -109,84 +130,221 @@
     '';
   };
 
-  # Nixcats config
-  nixCats = {
+  programs.helix = {
     enable = true;
-    packageNames = [ "nvim" ];
-    luaPath = ../../nvim;
-    categoryDefinitions.replace = ({ pkgs, ...}: {
-      startupPlugins = {
-        general = with pkgs.vimPlugins; [
-          # Core framework & manager
-          LazyVim
-          lazy-nvim # plugin manager
+    defaultEditor = true;
 
-          # UI
-          snacks-nvim
-          noice-nvim
-          lualine-nvim
-          bufferline-nvim
-          gitsigns-nvim
-          mini-icons
-          which-key-nvim
-          todo-comments-nvim
-          trouble-nvim
-          nui-nvim
+    settings = {
 
-          # Completion & snippets
-          blink-cmp
-          blink-compat
-          friendly-snippets
+      theme = "catppuccin_mocha";
 
-          # Editing & navigation
-          flash-nvim
-          mini-ai
-          mini-pairs
-          grug-far-nvim
-          yanky-nvim
-          persistence-nvim
-          plenary-nvim
+      editor = {
+        # Yanky replacement: Always use system clipboard
+        default-yank-register = "+";
 
-          # LSP, formatting & linting
-          nvim-lspconfig
-          conform-nvim
-          nvim-lint
-          lazydev-nvim
-          SchemaStore-nvim
+        line-number = "relative";
+        color-modes = true; # Changes statusline color based on mode (like lualine)
 
-          # Treesitter
-          nvim-treesitter.withAllGrammars
-          nvim-treesitter-textobjects
-          nvim-ts-autotag
-          ts-comments-nvim
+        # Bufferline replacement
+        bufferline = "multiple";
 
-          # Colorscheme
-          tokyonight-nvim
-          catppuccin-nvim
-          
-          # Mason
-          mason-nvim
-          mason-lspconfig-nvim
-          
-          # Misc
-          nvim-jdtls # extended support for java
-          venv-selector-nvim # venvs selector
-          markdown-preview-nvim 
-          render-markdown-nvim
+        # Cursor shapes like Neovim
+        cursor-shape = {
+          insert = "bar";
+          normal = "block";
+          select = "underline";
+        };
+
+        # UI Improvements
+        indent-guides.render = true;
+        lsp.display-messages = true;
+        lsp.display-inlay-hints = true; # Great for Rust and TypeScript
+
+        # Show hidden files in Telescope-like picker
+        file-picker.hidden = false;
+
+        statusline = {
+          left = [
+            "mode"
+            "spinner"
+            "file-name"
+            "file-modification-indicator"
+          ];
+          center = [ "diagnostics" ];
+          right = [
+            "selections"
+            "position"
+            "file-encoding"
+            "file-type"
+            "version-control"
+          ];
+          mode.normal = "NORMAL";
+          mode.insert = "INSERT";
+          mode.select = "SELECT";
+        };
+      };
+
+      # =========================================
+      # LAZYVIM KEYBINDING EMULATION
+      # =========================================
+      keys.normal = {
+        # Telescope Equivalents
+        space.space = "file_picker"; # <Space><Space> to find files
+        space."/" = "global_search"; # <Space>/ to grep
+        space.e = "file_explorer"; # Neo-tree equivalent
+
+        # Quick Save/Quit
+        space.w = ":w";
+        space.q = ":q";
+
+        # Buffer Management (<leader>b...)
+        space.b = {
+          d = ":buffer-close";
+          n = ":buffer-next";
+          p = ":buffer-previous";
+        };
+
+        # Code Actions (<leader>c...)
+        space.c = {
+          a = "code_action";
+          r = "rename_symbol";
+          f = ":format";
+        };
+
+        # Neovim Window Navigation (Ctrl + h/j/k/l)
+        "C-h" = "jump_view_left";
+        "C-j" = "jump_view_down";
+        "C-k" = "jump_view_up";
+        "C-l" = "jump_view_right";
+
+        # Escape clears selection (Vim-like behavior)
+        esc = [
+          "collapse_selection"
+          "keep_primary_selection"
         ];
       };
-    });
-    packageDefinitions.replace  = {
-      nvim = ({ pkgs, ... }: {
-        categories = {
-          general = true;
+
+      keys.insert = {
+        # Standard fast exit from insert mode
+        "C-c" = "normal_mode";
+      };
+    };
+
+    # =========================================
+    # LANGUAGE SERVERS & FORMATTERS
+    # =========================================
+    languages = {
+      language-server = {
+        basedpyright = {
+          command = "basedpyright-langserver";
+          args = [ "--stdio" ];
         };
-      });
+        ruff = {
+          command = "ruff";
+          args = [ "server" ];
+        };
+        nixd = {
+          command = "nixd";
+        };
+      };
+
+      language = [
+        {
+          name = "nix";
+          auto-format = true;
+          language-servers = [ "nixd" ];
+          formatter.command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
+        }
+        {
+          name = "python";
+          auto-format = true;
+          language-servers = [
+            "basedpyright"
+            "ruff"
+          ];
+          formatter = {
+            command = "${pkgs.ruff}/bin/ruff";
+            args = [
+              "format"
+              "-"
+            ];
+          };
+        }
+        {
+          name = "rust";
+          auto-format = true;
+          language-servers = [ "rust-analyzer" ];
+          formatter.command = "${pkgs.rustfmt}/bin/rustfmt";
+        }
+        {
+          name = "typescript";
+          auto-format = true;
+          language-servers = [ "typescript-language-server" ];
+          formatter = {
+            command = "${pkgs.nodePackages.prettier}/bin/prettier";
+            args = [
+              "--parser"
+              "typescript"
+            ];
+          };
+        }
+        {
+          name = "tsx";
+          auto-format = true;
+          language-servers = [
+            "typescript-language-server"
+            "tailwindcss-ls"
+          ];
+          formatter = {
+            command = "${pkgs.nodePackages.prettier}/bin/prettier";
+            args = [
+              "--parser"
+              "typescript"
+            ];
+          };
+        }
+        {
+          name = "json";
+          auto-format = true;
+          formatter = {
+            command = "${pkgs.nodePackages.prettier}/bin/prettier";
+            args = [
+              "--parser"
+              "json"
+            ];
+          };
+        }
+        {
+          name = "markdown";
+          auto-format = true;
+          language-servers = [ "marksman" ];
+          formatter = {
+            command = "${pkgs.nodePackages.prettier}/bin/prettier";
+            args = [
+              "--parser"
+              "markdown"
+            ];
+          };
+        }
+        {
+          name = "lua";
+          auto-format = true;
+          language-servers = [ "lua-language-server" ];
+          formatter = {
+            command = "${pkgs.stylua}/bin/stylua";
+            args = [ "-" ];
+          };
+        }
+        {
+          name = "java";
+          language-servers = [ "jdtls" ];
+        }
+      ];
     };
   };
 
   programs.home-manager.enable = true;
-  programs.waybar.enable = true;
+  # programs.waybar.enable = true;
   services.dunst.enable = true;
 
   home.stateVersion = "24.11";
