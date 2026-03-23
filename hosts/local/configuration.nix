@@ -84,6 +84,15 @@
   programs.light.enable = true;
   services.power-profiles-daemon.enable = true;
 
+  xdg.portal = {
+    enable = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gtk
+    ];
+    config.common.default = "*";
+  };
+
   # Enable bluetooth
   hardware.bluetooth.enable = true;
 
@@ -112,6 +121,16 @@
 
   programs.firefox.enable = true;
   programs.niri.enable = true;
+
+  # Enable Thunar file manager
+  programs.thunar = {
+    enable = true;
+    plugins = with pkgs.xfce; [
+      thunar-volman
+    ];
+  };
+  services.gvfs.enable = true; # Support for Trash, mounting, and network drives
+  services.tumbler.enable = true; # Support for image thumbnails
 
   # List packages installed in system profile.
   # You can use https://search.nixos.org/ to find more packages (and options).
