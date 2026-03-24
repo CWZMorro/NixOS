@@ -10,6 +10,7 @@
     ../../features/niri.nix
     ../../features/helix.nix
     ../../features/zellij.nix
+    ../../features/fastfetch.nix
   ];
 
   home.username = "cielnixazure";
@@ -79,6 +80,14 @@
       conf = "nvim ~/nixos-config/hosts/local/configuration.nix";
       home = "nvim ~/nixos-config/home/cielnixazure/home.nix";
     };
+    interactiveShellInit = ''
+      # Fastfetch
+      if set -q ZELLIJ
+          fastfetch -c ~/.config/fastfetch/minimal.jsonc --logo-type none
+      else
+          fastfetch -c ~/.config/fastfetch/minimal.jsonc
+      end
+    '';
   };
   programs.bash = {
     enable = true;
