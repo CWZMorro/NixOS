@@ -21,6 +21,11 @@
       keyboard {
         xkb { layout "us"; }
       }
+
+      touchpad {
+        natural-scroll
+       dwt // Disable while typing
+      }
     }
 
     binds {
