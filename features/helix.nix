@@ -67,6 +67,15 @@
         "^" = "goto_first_nonwhitespace";
         "G" = "goto_file_end";
 
+        "V" = [
+          "extend_line"
+          "select_mode"
+        ];
+        "C-c" = [
+          "collapse_selection"
+          "keep_primary_selection"
+        ];
+
         space.space = "file_picker";
         space."/" = "global_search";
         space.e = "file_explorer";
@@ -80,11 +89,6 @@
           p = ":buffer-previous";
         };
 
-        space.c = {
-          a = "code_action";
-          r = "rename_symbol";
-          f = ":format";
-        };
         "C-h" = "jump_view_left";
         "C-j" = "jump_view_down";
         "C-k" = "jump_view_up";
@@ -97,14 +101,18 @@
       };
 
       keys.insert = {
-        # Standard fast exit from insert mode
         "C-c" = "normal_mode";
+      };
+
+      keys.select = {
+        "C-c" = [
+          "normal_mode"
+          "collapse_selection"
+        ];
       };
     };
 
-    # =========================================
     # LANGUAGE SERVERS & FORMATTERS
-    # =========================================
     languages = {
       language-server = {
         basedpyright = {
