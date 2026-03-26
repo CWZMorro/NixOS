@@ -9,29 +9,24 @@
       theme = "catppuccin_mocha";
 
       editor = {
-        # Yanky replacement: Always use system clipboard
         default-yank-register = "+";
 
         line-number = "relative";
-        color-modes = true; # Changes statusline color based on mode (like lualine)
-
-        # Bufferline replacement
+        color-modes = true;
         bufferline = "multiple";
-
-        # Cursor shapes like Neovim
         cursor-shape = {
           insert = "bar";
           normal = "block";
           select = "underline";
         };
 
-        # UI Improvements
+        # UI
         indent-guides.render = true;
         lsp.display-messages = true;
-        lsp.display-inlay-hints = true; # Great for Rust and TypeScript
+        lsp.display-inlay-hints = true;
 
-        # Show hidden files in Telescope-like picker
-        file-picker.hidden = false;
+        # Show hidden files
+        file-picker.hidden = true;
 
         statusline = {
           left = [
@@ -54,40 +49,47 @@
         };
       };
 
-      # =========================================
-      # LAZYVIM KEYBINDING EMULATION
-      # =========================================
       keys.normal = {
-        # Telescope Equivalents
-        space.space = "file_picker"; # <Space><Space> to find files
-        space."/" = "global_search"; # <Space>/ to grep
-        space.e = "file_explorer"; # Neo-tree equivalent
+        w = [
+          "move_next_word_start"
+          "collapse_selection"
+        ];
+        e = [
+          "move_next_word_end"
+          "collapse_selection"
+        ];
+        b = [
+          "move_prev_word_start"
+          "collapse_selection"
+        ];
 
-        # Quick Save/Quit
+        "0" = "goto_line_start";
+        "^" = "goto_first_nonwhitespace";
+        "G" = "goto_file_end";
+
+        space.space = "file_picker";
+        space."/" = "global_search";
+        space.e = "file_explorer";
+
         space.w = ":w";
         space.q = ":q";
 
-        # Buffer Management (<leader>b...)
         space.b = {
           d = ":buffer-close";
           n = ":buffer-next";
           p = ":buffer-previous";
         };
 
-        # Code Actions (<leader>c...)
         space.c = {
           a = "code_action";
           r = "rename_symbol";
           f = ":format";
         };
-
-        # Neovim Window Navigation (Ctrl + h/j/k/l)
         "C-h" = "jump_view_left";
         "C-j" = "jump_view_down";
         "C-k" = "jump_view_up";
         "C-l" = "jump_view_right";
 
-        # Escape clears selection (Vim-like behavior)
         esc = [
           "collapse_selection"
           "keep_primary_selection"
