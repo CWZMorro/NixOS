@@ -7,6 +7,19 @@
     spawn-at-startup "dunst"
     // spawn-at-startup "nm-applet"
 
+    // Monitor configuration
+    output "HDMI-A-1" {
+      mode "1920x1080@240"
+      position x=0 y=0
+      scale 0.9
+    }
+
+    output "eDP-1" {
+      mode "1920x1080@144"
+      position x=-1920 y=0 // To the left of main monitor
+      scale 1.0
+    }
+
     layout {
       gaps 8 // Gap between the windows
     }
@@ -25,6 +38,12 @@
       touchpad {
         natural-scroll
        dwt // Disable while typing
+      }
+    }
+
+    gestures {
+      hot-corners {
+        off
       }
     }
 
@@ -83,6 +102,14 @@
       Mod+Shift+7 { move-column-to-workspace 7; }
       Mod+Shift+8 { move-column-to-workspace 8; }
       Mod+Shift+9 { move-column-to-workspace 9; }
+
+      // Focus monitors
+      Mod+Comma { focus-monitor-left; }
+      Mod+Period { focus-monitor-right; }
+
+      // Move windows between monitors
+      Mod+Shift+Comma { move-column-to-monitor-left; }
+      Mod+Shift+Period { move-column-to-monitor-right; }
 
       // Mouse controls
       Mod+WheelScrollDown cooldown-ms=150 { focus-workspace-down; }
