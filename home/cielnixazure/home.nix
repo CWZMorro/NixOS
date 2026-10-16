@@ -24,6 +24,8 @@
     spotify
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.morro-noctalia
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zellij-load
+    blender # Fate mod: weapon and staff models
+    blockbench # Fate mod: Minecraft models
 
     # Text Editors / IDEs
     vscode
@@ -50,6 +52,11 @@
     unzip
     gcc
     lazygit
+    gh # Fate mod: GitHub releases
+    imagemagick # Fate mod: reference and render sheets
+    ffmpeg # Fate mod: frames from reference videos
+    bun # Fate mod: headless Blockbench MCP (bunx)
+    xvfb-run # Fate mod: headless client game tests
 
     # CLI replacements
     bat
@@ -58,8 +65,9 @@
     zoxide
 
     # Runtimes
-    nodejs_22
+    nodejs_24 # Fate mod: was nodejs_22; pi-mcp needs Node 23.6 or newer
     jdk17
+    jdk25 # Fate mod: Minecraft 26.1.2 builds with Java 25
     python3
 
     # Theme
@@ -83,9 +91,18 @@
   programs.git = {
     enable = true;
     settings = {
-      user.name = "CielNixAzure";
+      user.name = "CWZ Morro"; # Fate mod: was "CielNixAzure"; matches the repos' author
       user.email = "cwzmorro@gmail.com";
       init.defaultBranch = "main";
+    };
+  };
+
+  # Jujutsu config (Fate mod repos)
+  programs.jujutsu = {
+    enable = true;
+    settings.user = {
+      name = "CWZ Morro";
+      email = "cwzmorro@gmail.com";
     };
   };
 

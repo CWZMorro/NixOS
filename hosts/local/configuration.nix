@@ -102,6 +102,31 @@
   services.asusd = {
     enable = true;
   };
+
+  # Fate mod: Tailscale, for the home server (log in once with `sudo tailscale up`)
+  services.tailscale.enable = true;
+
+  # Fate mod: lets the native libraries Gradle downloads for Minecraft (LWJGL) run
+  programs.nix-ld = {
+    enable = true;
+    libraries = with pkgs; [
+      stdenv.cc.cc.lib
+      zlib
+      libGL
+      glfw
+      openal
+      libpulseaudio # client library only; PipeWire serves it
+      alsa-lib
+      libxkbcommon
+      wayland
+      libx11
+      libxext
+      libxrandr
+      libxcursor
+      libxi
+      libxxf86vm
+    ];
+  };
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
 
@@ -141,6 +166,7 @@
     git
     asusctl # CLI tool to control battery
     libsecret # Secret service library
+    gparted # Fate mod: partition editor, for the partition plan
   ];
 
   # Some programs need SUID wrappers, can be configured further or are
