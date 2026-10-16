@@ -47,6 +47,9 @@
     nvidiaSettings = true;
   };
 
+  # Enable GNOME Keyring
+  services.gnome.gnome-keyring.enable = true;
+
   #Storage optimization
   nix.settings.auto-optimise-store = true;
 
@@ -81,7 +84,6 @@
 
   # Hardware Daemons
   services.upower.enable = true;
-  programs.light.enable = true;
   services.power-profiles-daemon.enable = true;
 
   xdg.portal = {
@@ -99,7 +101,6 @@
   # Enable asus specific services
   services.asusd = {
     enable = true;
-    enableUserService = true;
   };
   # Enable touchpad support (enabled default in most desktopManager).
   # services.libinput.enable = true;
@@ -139,6 +140,7 @@
     wget
     git
     asusctl # CLI tool to control battery
+    libsecret # Secret service library
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

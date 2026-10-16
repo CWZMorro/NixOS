@@ -23,6 +23,11 @@
     discord
     spotify
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.morro-noctalia
+    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zellij-load
+
+    # Text Editors / IDEs
+    vscode
+    code-cursor
 
     # Terminal emulator
     # kitty
@@ -46,6 +51,12 @@
     gcc
     lazygit
 
+    # CLI replacements
+    bat
+    eza
+    fzf
+    zoxide
+
     # Runtimes
     nodejs_22
     jdk17
@@ -55,6 +66,13 @@
     nerd-fonts.jetbrains-mono
     adwaita-icon-theme
     shared-mime-info
+
+    # rust
+    cargo
+    rustc
+
+    # AI
+    inputs.claude-code.packages.${pkgs.system}.default
 
   ];
 
@@ -75,7 +93,15 @@
   programs.fish = {
     enable = true;
     shellAliases = {
+      # eza
+      ls = "eza --color=always --icons=always";
+      ll = "eza -lg --color=always --icons=always";
+      lt = "eza --tree --color=always --icons=always";
+
+      # git
       lg = "lazygit";
+
+      # NixOS
       rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config#CielNixAzure";
       conf = "nvim ~/nixos-config/hosts/local/configuration.nix";
       home = "nvim ~/nixos-config/home/cielnixazure/home.nix";
@@ -87,6 +113,12 @@
       else
           fastfetch -c ~/.config/fastfetch/minimal.jsonc
       end
+
+      # zoxide
+      zoxide init fish --cmd cd | source
+
+      # fuzzy finder
+      fzf --fish | source
     '';
   };
   programs.bash = {
@@ -102,6 +134,7 @@
     enable = true;
     enableFishIntegration = true;
     enableBashIntegration = true;
+    shellWrapperName = "yy";
   };
 
   gtk = {

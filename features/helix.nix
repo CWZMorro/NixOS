@@ -62,6 +62,14 @@
           "move_prev_word_start"
           "collapse_selection"
         ];
+        f = [
+          "find_next_char"
+          "collapse_selection"
+        ];
+        F = [
+          "find_prev_char"
+          "collapse_selection"
+        ];
 
         "0" = "goto_line_start";
         "^" = "goto_first_nonwhitespace";
@@ -109,6 +117,10 @@
           "normal_mode"
           "collapse_selection"
         ];
+        X = [
+          "extend_line_up"
+          "extend_to_line_bounds"
+        ];
       };
     };
 
@@ -133,7 +145,7 @@
           name = "nix";
           auto-format = true;
           language-servers = [ "nixd" ];
-          formatter.command = "${pkgs.nixfmt-rfc-style}/bin/nixfmt";
+          formatter.command = "${pkgs.nixfmt}/bin/nixfmt";
         }
         {
           name = "python";

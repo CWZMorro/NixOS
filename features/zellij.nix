@@ -1,19 +1,28 @@
-{ pkgs, ... }:
+{ pkgs, inputs, ... }:
 
-let
-  zjstatus = pkgs.fetchurl {
-    url = "https://github.com/dj95/zjstatus/releases/download/v0.22.0/zjstatus.wasm";
-    sha256 = "sha256-TeQm0gscv4YScuknrutbSdksF/Diu50XP4W/fwFU3VM=";
-  };
-
-  zellij_load = pkgs.fetchurl {
-    url = "https://github.com/christian-prather/zellij-load/releases/latest/download/zellij-load-plugin.wasm";
-    sha256 = "sha256-8oMVDV0edKjXMQSa10zJRwIlunWkJVnOBvzv5KlS6fQ=";
-  };
-in
 {
   programs.zellij = {
     enable = true;
+
+    # Default layout with zellij-load plugin in top-right corner
+    # Shows CPU/memory/GPU stats next to tabs in the top bar
+    layouts.default = ''
+      layout {
+        pane size=1 split_direction="vertical" borderless=true {
+          pane size="65%" {
+            plugin location="tab-bar"
+          }
+          pane size="35%" {
+            plugin location="file:${inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zellij-load}/share/zellij/plugins/zellij-load.wasm"
+          }
+        }
+        pane
+        pane size=2 borderless=true {
+          plugin location="status-bar"
+        }
+      }
+    '';
+
     settings = {
       pane_frames = false;
       default_shell = "fish";
@@ -67,38 +76,4 @@ in
     };
   };
 
-  xdg.configFile."zellij/layouts/default.kdl".text = ''
-    layout {
-        // TOP BAR: Split vertically to hold both plugins
-        pane size=1 split_direction="vertical" {
-            
-            // Top Left: ONLY the tabs (No name, no title)
-            pane {
-                plugin location="file:${zjstatus}" {
-                    format_left  "{tabs}"
-                    format_right ""
-                    format_space "#[bg=default]"
-
-                    tab_normal   "#[bg=#89b4fa,fg=#1e1e2e,bold]  {index} #[bg=default,fg=#89b4fa] "
-                    tab_active   "#[bg=#a6e3a1,fg=#1e1e2e,bold]  {index} #[bg=default,fg=#a6e3a1] "
-                }
-            }
-            
-            // Top Right: CPU and RAM tracking
-            pane size=35 {
-                plugin location="file:${zellij_load}" {
-                    theme "catppuccin-mocha"
-                }
-            }
-        }
-        
-        // MAIN TERMINAL AREA
-        pane
-        
-        // BOTTOM BAR: Restoring the section I accidentally deleted
-        pane size=2 {
-            plugin location="zellij:status-bar"
-        }
-    }
-  '';
 }
