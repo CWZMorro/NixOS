@@ -23,14 +23,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    zjstatus.url = "github:dj95/zjstatus";
-
     claude-code.url = "github:sadjow/claude-code-nix";
-
-    zellij-load = {
-      url = "path:/home/cielnixazure/Projects/zellij-load";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
   };
   outputs =
     inputs@{ flake-parts, ... }:

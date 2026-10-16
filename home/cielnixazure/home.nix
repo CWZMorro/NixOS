@@ -9,7 +9,7 @@
   imports = [
     ../../features/niri.nix
     ../../features/helix.nix
-    ../../features/zellij.nix
+    ../../features/herdr.nix
     ../../features/fastfetch.nix
   ];
 
@@ -23,7 +23,6 @@
     discord
     spotify
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.morro-noctalia
-    inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.zellij-load
     blender # Fate mod: weapon and staff models
     blockbench # Fate mod: Minecraft models
 
@@ -125,7 +124,7 @@
     };
     interactiveShellInit = ''
       # Fastfetch
-      if set -q ZELLIJ
+      if set -q HERDR_PANE_ID # inside herdr
           fastfetch -c ~/.config/fastfetch/minimal.jsonc --logo-type none
       else
           fastfetch -c ~/.config/fastfetch/minimal.jsonc
