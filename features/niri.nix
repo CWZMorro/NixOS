@@ -9,16 +9,19 @@
 
     // Monitor configuration
     output "HDMI-A-1" {
-      mode "1920x1080@240"
+      mode "2560x1440@143.999"
       position x=0 y=0
-      scale 0.9
+      scale 1.0
     }
 
     output "eDP-1" {
-      mode "1920x1080@144"
+      mode "1920x1080@143.998"
       position x=-1920 y=0 // To the left of main monitor
       scale 1.0
     }
+
+    // Ask apps not to draw their own title bars
+    prefer-no-csd
 
     layout {
       gaps 8 // Gap between the windows

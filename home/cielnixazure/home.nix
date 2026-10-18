@@ -8,31 +8,42 @@
 {
   imports = [
     ../../features/niri.nix
-    ../../features/helix.nix
     ../../features/herdr.nix
     ../../features/fastfetch.nix
+    ../../features/fish.nix
   ];
 
   home.username = "cielnixazure";
   home.homeDirectory = "/home/cielnixazure";
   home.file.".face".source = ../../media/profile.png;
+  home.sessionVariables.EDITOR = "nvim"; # overrides NixOS's default EDITOR=nano
 
   home.packages = with pkgs; [
     # GUI Apps
     xwayland-satellite # needed for x11 apps
-    discord
-    spotify
+    vesktop
+    # Run natively on Wayland so xwayland-satellite doesn't draw a title bar
+    (symlinkJoin {
+      name = "spotify";
+      paths = [ spotify ];
+      nativeBuildInputs = [ makeWrapper ];
+      postBuild = "wrapProgram $out/bin/spotify --set NIXOS_OZONE_WL 1";
+    })
+    modrinth-app
     inputs.self.packages.${pkgs.stdenv.hostPlatform.system}.morro-noctalia
-    blender # Fate mod: weapon and staff models
-    blockbench # Fate mod: Minecraft models
+    blender
+    blockbench
+    tigervnc
+    osu-lazer-bin
 
     # Text Editors / IDEs
     vscode
     code-cursor
+    jetbrains.idea
+    neovim
 
     # Terminal emulator
     # kitty
-    wezterm
 
     # Utilities
     fuzzel
@@ -51,23 +62,30 @@
     unzip
     gcc
     lazygit
-    gh # Fate mod: GitHub releases
-    imagemagick # Fate mod: reference and render sheets
-    ffmpeg # Fate mod: frames from reference videos
-    bun # Fate mod: headless Blockbench MCP (bunx)
-    xvfb-run # Fate mod: headless client game tests
+    gh
+    imagemagick
+    ffmpeg
+    bun
+    xvfb-run
+
+    # Fun CLI tools
+    cbonsai
+    cmatrix
+    cava
 
     # CLI replacements
     bat
     eza
     fzf
     zoxide
+    (btop.override { cudaSupport = true; })
 
     # Runtimes
-    nodejs_24 # Fate mod: was nodejs_22; pi-mcp needs Node 23.6 or newer
-    jdk17
-    jdk25 # Fate mod: Minecraft 26.1.2 builds with Java 25
+    nodejs_24
+    pnpm
+    jdk25
     python3
+    uv
 
     # Theme
     nerd-fonts.jetbrains-mono
@@ -79,7 +97,8 @@
     rustc
 
     # AI
-    inputs.claude-code.packages.${pkgs.system}.default
+    claude-code
+    pi-coding-agent
 
   ];
 
@@ -90,13 +109,13 @@
   programs.git = {
     enable = true;
     settings = {
-      user.name = "CWZ Morro"; # Fate mod: was "CielNixAzure"; matches the repos' author
+      user.name = "CWZ Morro";
       user.email = "cwzmorro@gmail.com";
       init.defaultBranch = "main";
     };
   };
 
-  # Jujutsu config (Fate mod repos)
+  # Jujutsu config
   programs.jujutsu = {
     enable = true;
     settings.user = {
@@ -105,38 +124,6 @@
     };
   };
 
-  # Shell config
-  programs.fish = {
-    enable = true;
-    shellAliases = {
-      # eza
-      ls = "eza --color=always --icons=always";
-      ll = "eza -lg --color=always --icons=always";
-      lt = "eza --tree --color=always --icons=always";
-
-      # git
-      lg = "lazygit";
-
-      # NixOS
-      rebuild = "sudo nixos-rebuild switch --flake ~/nixos-config#CielNixAzure";
-      conf = "nvim ~/nixos-config/hosts/local/configuration.nix";
-      home = "nvim ~/nixos-config/home/cielnixazure/home.nix";
-    };
-    interactiveShellInit = ''
-      # Fastfetch
-      if set -q HERDR_PANE_ID # inside herdr
-          fastfetch -c ~/.config/fastfetch/minimal.jsonc --logo-type none
-      else
-          fastfetch -c ~/.config/fastfetch/minimal.jsonc
-      end
-
-      # zoxide
-      zoxide init fish --cmd cd | source
-
-      # fuzzy finder
-      fzf --fish | source
-    '';
-  };
   programs.bash = {
     enable = true;
     initExtra = ''
@@ -146,11 +133,26 @@
     '';
   };
 
+  programs.wezterm = {
+    enable = true;
+    extraConfig = ''
+      local config = wezterm.config_builder()
+      config.enable_tab_bar = false -- herdr handles tabs
+      config.font_size = 14.0
+      return config
+    '';
+  };
+
   programs.yazi = {
     enable = true;
     enableFishIntegration = true;
     enableBashIntegration = true;
     shellWrapperName = "yy";
+    settings.mgr = {
+      ratio = [ 1 3 4 ];
+      sort_by = "natural";
+      show_hidden = true;
+    };
   };
 
   gtk = {
@@ -163,12 +165,15 @@
 
   qt = {
     enable = true;
-    platformTheme.name = "gtk";
+    platformTheme.name = "gtk3";
   };
 
   programs.home-manager.enable = true;
   # programs.waybar.enable = true;
-  services.dunst.enable = true;
+  services.dunst = {
+    enable = true;
+    settings.global.follow = "keyboard";
+  };
 
   services.udiskie = {
     enable = true;

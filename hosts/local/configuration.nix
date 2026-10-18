@@ -113,6 +113,7 @@
       stdenv.cc.cc.lib
       zlib
       libGL
+      vulkan-loader
       glfw
       openal
       libpulseaudio # client library only; PipeWire serves it
@@ -151,7 +152,7 @@
   # Enable Thunar file manager
   programs.thunar = {
     enable = true;
-    plugins = with pkgs.xfce; [
+    plugins = with pkgs; [
       thunar-volman
     ];
   };
@@ -211,5 +212,8 @@
   #
   # For more information, see `man configuration.nix` or https://nixos.org/manual/nixos/stable/options#opt-system.stateVersion .
   system.stateVersion = "25.11"; # Did you read the comment?
+
+  # Mount shared partition
+  fileSystems."/data" = { device = "/dev/disk/by-label/shared"; fsType = "ext4"; options = [ "nofail" ]; };
 
 }
