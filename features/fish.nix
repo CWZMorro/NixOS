@@ -26,6 +26,13 @@
       cielmacazure = "ssh mac";
       heylaubuntuazure = "ssh ubuntu";
 
+      # run omp in ~/firstmate
+      fm = ''
+        pushd ~/firstmate; or return
+        omp $argv
+        popd
+      '';
+
       # Prompt: distro icon, current dir, jj bookmark (or git branch), ❯ colored by last exit status
       fish_prompt = ''
         set -l last_status $status

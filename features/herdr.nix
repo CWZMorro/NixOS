@@ -13,5 +13,8 @@
     prefix = "ctrl+s"
     split_vertical = "prefix+%"
     split_horizontal = "prefix+\""
+
+    [experimental]
+    pane_history = true
   '';
 }
