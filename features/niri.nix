@@ -79,10 +79,10 @@
       Mod+L { focus-column-right; }
 
       // Move windows
-      Mod+Ctrl+H { move-column-left; }
-      Mod+Ctrl+J { move-window-down; }
-      Mod+Ctrl+K { move-window-up; }
-      Mod+Ctrl+L { move-column-right; }
+      Mod+Shift+H { swap-window-left; }
+      Mod+Shift+J { move-window-to-workspace-down; }
+      Mod+Shift+K { move-window-to-workspace-up; }
+      Mod+Shift+L { swap-window-right; }
 
       // Focus workspaces
       Mod+1 { focus-workspace 1; }
