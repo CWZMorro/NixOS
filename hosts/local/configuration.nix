@@ -6,6 +6,7 @@
   config,
   lib,
   pkgs,
+  inputs,
   ...
 }:
 
@@ -32,10 +33,12 @@
   # Configure network connections interactively with nmcli or nmtui.
   networking.networkmanager.enable = true;
 
-  nix.settings.experimental-features = [
-    "nix-command"
-    "flakes"
-  ];
+  nix.settings = {
+    experimental-features = [
+      "nix-command"
+      "flakes"
+    ];
+  };
   nixpkgs.config.allowUnfree = true;
 
   hardware.graphics.enable = true;
@@ -168,6 +171,7 @@
     asusctl # CLI tool to control battery
     libsecret # Secret service library
     gparted # Fate mod: partition editor, for the partition plan
+    inputs.twintail.packages.${pkgs.stdenv.hostPlatform.system}.default # Twintail Launcher
   ];
 
   # Some programs need SUID wrappers, can be configured further or are

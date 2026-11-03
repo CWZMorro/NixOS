@@ -11,6 +11,7 @@
     ../../features/herdr.nix
     ../../features/fastfetch.nix
     ../../features/fish.nix
+    inputs.omp.homeManagerModules.default
   ];
 
   home.username = "cielnixazure";
@@ -35,6 +36,7 @@
     blockbench
     tigervnc
     osu-lazer-bin
+    chromium
 
     # Text Editors / IDEs
     vscode
@@ -47,6 +49,7 @@
 
     # Utilities
     fuzzel
+    yt-dlp
 
     dunst
     pkgs.networkmanagerapplet
@@ -67,6 +70,11 @@
     ffmpeg
     bun
     xvfb-run
+    _7zz-rar
+
+    # file viewer
+    mpv # video
+    imv # image 
 
     # Fun CLI tools
     cbonsai
@@ -82,9 +90,11 @@
 
     # Runtimes
     nodejs_24
-    pnpm
     jdk25
     python3
+
+    # Package managers
+    pnpm
     uv
 
     # Theme
@@ -100,7 +110,16 @@
     claude-code
     pi-coding-agent
 
+    # firstmate
+    jq
+    inputs.treehouse.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.no-mistakes.packages.${pkgs.stdenv.hostPlatform.system}.default
+
   ];
+
+  # npm: default global prefix is the read-only nodejs store path, so `npm install -g` goes here instead
+  home.sessionVariables.NPM_CONFIG_PREFIX = "$HOME/.npm-global";
+  home.sessionPath = [ "$HOME/.npm-global/bin" ];
 
   # Noctalia config
   xdg.configFile."noctalia/settings.json".source = ../../features/noctalia-settings.json;
@@ -139,9 +158,12 @@
       local config = wezterm.config_builder()
       config.enable_tab_bar = false -- herdr handles tabs
       config.font_size = 14.0
+      config.adjust_window_size_when_changing_font_size = false
       return config
     '';
   };
+
+  programs.omp.enable = true;
 
   programs.yazi = {
     enable = true;

@@ -22,6 +22,23 @@
       url = "github:noctalia-dev/noctalia-qs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    omp.url = "github:can1357/oh-my-pi";
+
+    treehouse = {
+      url = "github:kunchenguid/treehouse";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    no-mistakes = {
+      url = "github:kunchenguid/no-mistakes";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    twintail = {
+      url = "github:axioncs/twintaillauncher-flake";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
   outputs =
     inputs@{ flake-parts, ... }:
